@@ -1,0 +1,381 @@
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/posts":
+    get:
+      summary: Retrieves all posts
+      tags:
+        - Posts
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Posts found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      summary: Creates a post
+      tags:
+        - Posts
+      description: Creates a post. The `author_id` is set automatically from the authenticated user's JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                body:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  example: ["tag1", "tag2"]
+              required:
+                - title
+                - body
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '422':
+          description: Validation error
+
+  "/posts/{id}":
+    parameters:
+      - name: id
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Retrieves a specific post
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: Post found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+    put:
+      summary: Updates a specific post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                body:
+                  type: string
+                tags:
+                  type: string
+              required:
+                - title
+                - body
+      responses:
+        '200':
+          description: Post updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+        '403':
+          description: Not authorized
+    delete:
+      summary: Deletes a specific post
+      tags:
+        - Posts
+      responses:
+        '204':
+          description: Post deleted
+        '404':
+          description: Post not found
+        '403':
+          description: Not authorized
+  "/posts/{id}/tags":
+    patch:
+      summary: Update the tags of a post
+      tags:
+        - Posts
+      description: Allows the author of a post to update its tags.
+      parameters:
+        - name: id
+          in: path
+          description: Post ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  items:
+                    type: string
+              example:
+                tags: ["new_tag1", "new_tag2"]
+      responses:
+        '200':
+          description: Tags updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation error
+  "/posts/{postId}/comments":
+    parameters:
+      - name: id
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Adds a comment to a post
+      tags:
+        - Comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required:
+                - content
+      responses:
+        '201':
+          description: Comment added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Post not found
+        '403':
+          description: Not authorized
+
+  "/posts/{postId}/comments/{id}":
+    parameters:
+      - name: id
+        in: path
+        description: Comment ID
+        required: true
+        schema:
+          type: integer
+    put:
+      summary: Updates a specific comment
+      tags:
+        - Comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required:
+                - content
+      responses:
+        '200':
+          description: Comment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Comment not found
+        '403':
+          description: Not authorized
+    delete:
+      summary: Deletes a specific comment
+      tags:
+        - Comments
+      responses:
+        '204':
+          description: Comment deleted
+        '404':
+          description: Comment not found
+        '403':
+          description: Not authorized
+
+  "/users":
+    post:
+      summary: Register a new user
+      description: Registers a new user.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: password123
+                password_confirmation:
+                  type: string
+                  example: password123
+                image:
+                  type: string
+                  example: string
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Validation error
+
+  "/auth/login":
+    post:
+      summary: User login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        '401':
+          description: Invalid credentials
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        tags:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        author_id:
+          type: integer
+          description: ID of the user who created the post
+      required:
+        - title
+        - body
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        post_id:
+          type: integer
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user_id:
+          type: integer
+          description: ID of the user who made the comment
+      required:
+        - content
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        token:
+          type: string
+          description: JWT token for user authentication
+
+servers:
+  - url: http://localhost:3000

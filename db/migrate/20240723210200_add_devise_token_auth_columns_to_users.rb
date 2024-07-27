@@ -2,7 +2,7 @@ class AddDeviseTokenAuthColumnsToUsers < ActiveRecord::Migration[6.1]
   def change
     change_table :users do |t|
       ## Required
-      t.string :provider, null: false, default: "email" unless column_exists?(:users, :provider)
+      # t.string :provider, null: false, default: "email" unless column_exists?(:users, :provider)
       t.string :uid, null: false, default: "" unless column_exists?(:users, :uid)
 
       ## Database authenticatable
@@ -35,7 +35,7 @@ class AddDeviseTokenAuthColumnsToUsers < ActiveRecord::Migration[6.1]
       ## Tokens
       t.json :tokens unless column_exists?(:users, :tokens)
 
-      t.index [ :uid, :provider ], unique: true unless index_exists?(:users, [ :uid, :provider ])
+      # t.index [ :uid, :provider ], unique: true unless index_exists?(:users, [ :uid, :provider ])
       t.index [ :email ], unique: true unless index_exists?(:users, :email)
     end
   end

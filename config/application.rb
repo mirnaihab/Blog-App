@@ -8,6 +8,8 @@ Bundler.require(*Rails.groups)
 
 module Blogapp
   class Application < Rails::Application
+    config.secret_key_base = ENV["SECRET_KEY_BASE"]
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
@@ -18,11 +20,12 @@ module Blogapp
     # config.middleware.use JwtAuthentication
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins "http://localhost:3000"
+        origins "*"
+        # origins "http://localhost:3000"
         resource "*",
           headers: :any,
           methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
-          credentials: true
+          credentials: false
       end
     end
     # Configuration for the application, engines, and railties goes here.

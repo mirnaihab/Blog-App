@@ -38,6 +38,8 @@ gem "rswag-ui"
 gem "rswag"
 # gem "rswag-specs"
 gem "rack-cors"
+# Gemfile
+gem "dotenv-rails", groups: [ :development, :test ]
 
 # gem "swagger-rails"
 

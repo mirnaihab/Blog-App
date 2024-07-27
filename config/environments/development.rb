@@ -2,7 +2,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-
+  config.secret_key_base = ENV["SECRET_KEY_BASE"]
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
@@ -40,8 +40,10 @@ Rails.application.configure do
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
   config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = { host: "web", port: 3000 }
+  config.hosts << "web"
 
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  # config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -63,7 +65,7 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
-
+  config.secret_key_base="1673cb4d8582017563eca5d4ab069ef2f18b03e5630555dddb91b6d8b4a57a8d0542143fa1d3c698fdfd83b0898ab3282a36cfa6826d8f70cc9662d59ecbc445"
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

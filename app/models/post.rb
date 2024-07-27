@@ -39,8 +39,8 @@ class Post < ApplicationRecord
   #   DeleteOldPostsJob.set(wait: 24.hours).perform_later(self.id)
   # end
   def schedule_deletion
-    # DeletePostWorker.perform_in(2.minutes, self.id)
-    DeletePostWorker.perform_in(24.hours, self.id)
+    DeletePostWorker.perform_in(2.minutes, self.id)
+    # DeletePostWorker.perform_in(24.hours, self.id)
 
     # DeletePostWorker.perform_in(24.hours, self.id)
   end
